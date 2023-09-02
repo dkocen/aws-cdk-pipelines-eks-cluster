@@ -34,8 +34,8 @@ export class EksPipelineStack extends Stack {
     const clusterANameSuffix = "blue";
     const clusterBNameSuffix = "green";
 
-    const eksClusterStageA = new EksClusterStage(this, "EKSClusterA", {
-      clusterVersion: eks.KubernetesVersion.V1_20,
+    const eksClusterStageA = new EksClusterStage(this, "EKSClusterX", {
+      clusterVersion: eks.KubernetesVersion.V1_27,
       nameSuffix: clusterANameSuffix,
       env: {
         account: process.env.CDK_DEFAULT_ACCOUNT,
@@ -43,8 +43,8 @@ export class EksPipelineStack extends Stack {
       },
     });
 
-    const eksClusterStageB = new EksClusterStage(this, "EKSClusterB", {
-      clusterVersion: eks.KubernetesVersion.V1_21,
+    const eksClusterStageB = new EksClusterStage(this, "EKSClusterY", {
+      clusterVersion: eks.KubernetesVersion.V1_27,
       nameSuffix: clusterBNameSuffix,
       env: {
         account: process.env.CDK_DEFAULT_ACCOUNT,
