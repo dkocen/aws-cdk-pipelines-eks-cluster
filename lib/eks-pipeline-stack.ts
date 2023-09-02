@@ -34,7 +34,7 @@ export class EksPipelineStack extends Stack {
     const clusterANameSuffix = "blue";
     const clusterBNameSuffix = "green";
 
-    const eksClusterStageA = new EksClusterStage(this, "EKSClusterX", {
+    const eksClusterStageA = new EksClusterStage(this, "EKSClusterBlue", {
       clusterVersion: eks.KubernetesVersion.V1_27,
       nameSuffix: clusterANameSuffix,
       env: {
@@ -43,7 +43,7 @@ export class EksPipelineStack extends Stack {
       },
     });
 
-    const eksClusterStageB = new EksClusterStage(this, "EKSClusterY", {
+    const eksClusterStageB = new EksClusterStage(this, "EKSClusterGreen", {
       clusterVersion: eks.KubernetesVersion.V1_27,
       nameSuffix: clusterBNameSuffix,
       env: {
