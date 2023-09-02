@@ -60,24 +60,24 @@ export class EksClusterStack extends cdk.Stack {
       "/eks-cdk-pipelines/zoneName"
     );
 
-    new ExternalDNS(this, "ExternalDNS", {
-      cluster: cluster,
-      hostZoneId: hostZoneId,
-      domainFilters: [`${props.nameSuffix}.${zoneName}`],
-    });
+    // new ExternalDNS(this, "ExternalDNS", {
+    //   cluster: cluster,
+    //   hostZoneId: hostZoneId,
+    //   domainFilters: [`${props.nameSuffix}.${zoneName}`],
+    // });
 
-    new ContainerInsights(this, "ContainerInsights", {
-      cluster: cluster,
-    });
+    // new ContainerInsights(this, "ContainerInsights", {
+    //   cluster: cluster,
+    // });
 
-    new Calico(this, "Calico", {
-      cluster: cluster,
-    });
+    // new Calico(this, "Calico", {
+    //   cluster: cluster,
+    // });
 
-    new Echoserver(this, "EchoServer", {
-      cluster: cluster,
-      nameSuffix: props.nameSuffix,
-      domainName: zoneName,
-    });
+    // new Echoserver(this, "EchoServer", {
+    //   cluster: cluster,
+    //   nameSuffix: props.nameSuffix,
+    //   domainName: zoneName,
+    // });
   }
 }
