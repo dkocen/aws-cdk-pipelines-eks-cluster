@@ -5,13 +5,9 @@ import * as iam from "aws-cdk-lib/aws-iam";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as ssm from "aws-cdk-lib/aws-ssm";
 
-import { EksManagedNodeGroup } from "./infrastructure/eks-mng";
-import { AWSLoadBalancerController } from "./infrastructure/aws-load-balancer-controller";
 import { ExternalDNS } from "./infrastructure/external-dns";
-import { ClusterAutoscaler } from "./infrastructure/cluster-autoscaler";
 import { ContainerInsights } from "./infrastructure/container-insights";
 import { Calico } from "./infrastructure/calico";
-import { Prometheus } from "./infrastructure/prometheus";
 import { Echoserver } from "./application/echoserver";
 
 export interface EksClusterStackProps extends cdk.StackProps {
@@ -23,14 +19,13 @@ export class EksClusterStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props: EksClusterStackProps) {
     super(scope, id, props);
 
-    const vpc = new ec2.Vpc(this, "Vpc", { maxAzs: 3 });
 
-    const cluster = new eks.Cluster(this, `acme-${props.nameSuffix}`, {
+    const cluster = new eks.FargateCluster(this, `acme-${props.nameSuffix}`, {
       clusterName: `acme-${props.nameSuffix}`,
       version: props.clusterVersion,
-      defaultCapacity: 0,
-      vpc,
-      vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS }],
+      albController: {
+          version: eks.AlbControllerVersion.V2_4_1
+      }
     });
 
     const aud = `${cluster.clusterOpenIdConnectIssuer}:aud`;
@@ -55,39 +50,6 @@ export class EksClusterStack extends cdk.Stack {
       iam.ManagedPolicy.fromAwsManagedPolicyName("AmazonEKS_CNI_Policy")
     );
 
-    const awsNodeCniPatch = new eks.KubernetesPatch(
-      this,
-      "serviceAccount/aws-node",
-      {
-        cluster,
-        resourceName: "serviceAccount/aws-node",
-        resourceNamespace: "kube-system",
-        applyPatch: {
-          metadata: {
-            annotations: {
-              "eks.amazonaws.com/role-arn": awsNodeIamRole.roleArn,
-            },
-          },
-        },
-        restorePatch: {
-          metadata: {
-            annotations: {},
-          },
-        },
-      }
-    );
-
-    const eksMng = new EksManagedNodeGroup(this, "EksManagedNodeGroup", {
-      cluster: cluster,
-      nameSuffix: props.nameSuffix,
-    });
-
-    eksMng.node.addDependency(awsNodeCniPatch);
-
-    new AWSLoadBalancerController(this, "AWSLoadBalancerController", {
-      cluster: cluster,
-    });
-
     const hostZoneId = ssm.StringParameter.valueForStringParameter(
       this,
       "/eks-cdk-pipelines/hostZoneId"
@@ -104,19 +66,11 @@ export class EksClusterStack extends cdk.Stack {
       domainFilters: [`${props.nameSuffix}.${zoneName}`],
     });
 
-    new ClusterAutoscaler(this, "ClusterAutoscaler", {
-      cluster: cluster,
-    });
-
     new ContainerInsights(this, "ContainerInsights", {
       cluster: cluster,
     });
 
     new Calico(this, "Calico", {
-      cluster: cluster,
-    });
-
-    new Prometheus(this, "Prometheus", {
       cluster: cluster,
     });
 

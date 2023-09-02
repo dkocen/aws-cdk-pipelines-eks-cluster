@@ -13,7 +13,7 @@ export class Calico extends Construct {
       chart: "tigera-operator",
       release: "calico",
       repository: "https://docs.projectcalico.org/charts",
-      version: "v3.20.0",
+      version: "v3.26.1",
       values: {
         installation: {
           kubernetesProvider: "EKS",
