@@ -6,5 +6,15 @@
     "us-east-1d",
     "us-east-1e",
     "us-east-1f"
+  ],
+  "acknowledged-issue-numbers": [
+    19836,
+    25674
+  ],
+  "availability-zones:account=274344030317:region=us-west-2": [
+    "us-west-2a",
+    "us-west-2b",
+    "us-west-2c",
+    "us-west-2d"
   ]
 }

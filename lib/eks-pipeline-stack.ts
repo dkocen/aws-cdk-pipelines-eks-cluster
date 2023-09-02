@@ -17,14 +17,14 @@ export class EksPipelineStack extends cdk.Stack {
     const pipeline = new CodePipeline(this, "Pipeline", {
       synth: new ShellStep("Synth", {
         input: CodePipelineSource.gitHub(
-          "aws-samples/aws-cdk-pipelines-eks-cluster",
+          "dkocen/aws-cdk-pipelines-eks-cluster",
           "main",
           {
             authentication:
               cdk.SecretValue.secretsManager("github-oauth-token"),
           }
         ),
-        commands: ["npm ci", "npm run build", "npx cdk synth"],
+        commands: ["npm install -g npm@latest", "npm ci", "npm run build", "npx cdk synth"],
       }),
       pipelineName: "EKSClusterBlueGreen",
     });
