@@ -1,13 +1,15 @@
-import * as cdk from "@aws-cdk/core";
-import * as route53 from "@aws-cdk/aws-route53";
-import * as ssm from "@aws-cdk/aws-ssm";
 
-export interface AppDnsStackProps extends cdk.StackProps {
+import { Construct } from "constructs";
+import * as route53 from "aws-cdk-lib/aws-route53";
+import * as ssm from "aws-cdk-lib/aws-ssm";
+import { StackProps, Stack, Duration } from "aws-cdk-lib";
+
+export interface AppDnsStackProps extends StackProps {
   envName: string;
 }
 
-export class AppDnsStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props: AppDnsStackProps) {
+export class AppDnsStack extends Stack {
+  constructor(scope: Construct, id: string, props: AppDnsStackProps) {
     super(scope, id, props);
 
     const hostZoneId = ssm.StringParameter.valueForStringParameter(
@@ -29,7 +31,7 @@ export class AppDnsStack extends cdk.Stack {
       zone: zone,
       recordName: "app",
       domainName: `echoserver.${props.envName}.${zoneName}`,
-      ttl: cdk.Duration.seconds(30),
+      ttl: Duration.seconds(30),
     });
   }
 }
