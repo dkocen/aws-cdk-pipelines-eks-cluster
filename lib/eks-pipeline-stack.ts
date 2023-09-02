@@ -24,6 +24,7 @@ export class EksPipelineStack extends cdk.Stack {
               cdk.SecretValue.secretsManager("github-oauth-token"),
           }
         ),
+        installCommands: ['npm i -g npm@latest'],
         commands: ["npm ci", "npm run build", "npx cdk synth"],
       }),
       pipelineName: "EKSClusterBlueGreen",
